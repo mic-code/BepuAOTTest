@@ -5,10 +5,11 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <BaseOutputPath></BaseOutputPath>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Wrapper\Wrapper.csproj" />
-  </ItemGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy /y /d  &quot;$(SolutionDir)Wrapper\publish\Release\net8.0\*.dll&quot; &quot;$(OutDir)&quot;" />
+  </Target>
 
 </Project>
