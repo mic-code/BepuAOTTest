@@ -20,8 +20,8 @@ namespace AOTTest
 
             while (true)
             {
-                //StepSimulation();
-                //GetBodyPos();
+                StepSimulation();
+                GetBodyPos();
                 Thread.Sleep(10);
             }
         }

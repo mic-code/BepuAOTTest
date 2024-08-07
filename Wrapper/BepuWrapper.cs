@@ -24,12 +24,12 @@ public class BepuWrapper
         var integrator = new PoseIntegratorCallbacks(new Vector3(0, -10, 0));
         var solver = new SolveDescription(8, 1);
         sim = Simulation.Create(bufferPool, narrow, integrator, solver);
-        //sim.Statics.Add(new StaticDescription(new Vector3(0, -0.5f, 0), sim.Shapes.Add(new Box(500, 1, 500))));
+        sim.Statics.Add(new StaticDescription(new Vector3(0, -0.5f, 0), sim.Shapes.Add(new Box(500, 1, 500))));
 
-        //var sphereShape = new Sphere(1);
-        //var bodyDesc = BodyDescription.CreateDynamic(new Vector3(), sphereShape.ComputeInertia(1), sim.Shapes.Add(sphereShape), 0.01f);
-        //bodyDesc.Pose = (new Vector3(0, 10, 0), QuaternionEx.CreateFromAxisAngle(Vector3.UnitY, 0));
-        //sim.Bodies.Add(bodyDesc);
+        var sphereShape = new Sphere(1);
+        var bodyDesc = BodyDescription.CreateDynamic(new Vector3(), sphereShape.ComputeInertia(1), sim.Shapes.Add(sphereShape), 0.01f);
+        bodyDesc.Pose = (new Vector3(0, 10, 0), QuaternionEx.CreateFromAxisAngle(Vector3.UnitY, 0));
+        sim.Bodies.Add(bodyDesc);
     }
 
     [UnmanagedCallersOnly(EntryPoint = "StepSimulation")]
