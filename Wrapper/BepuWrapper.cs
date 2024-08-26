@@ -16,7 +16,7 @@ public class BepuWrapper
     static Simulation sim;
     static BodyHandle bodyHandle;
 
-    [UnmanagedCallersOnly(EntryPoint = "CreateSimulationInstance")]
+    [UnmanagedCallersOnly(EntryPoint = nameof(CreateSimulationInstance))]
     public static void CreateSimulationInstance()
     {
         bufferPool = new BufferPool();
@@ -32,13 +32,13 @@ public class BepuWrapper
         sim.Bodies.Add(bodyDesc);
     }
 
-    [UnmanagedCallersOnly(EntryPoint = "StepSimulation")]
+    [UnmanagedCallersOnly(EntryPoint = nameof(StepSimulation))]
     public static void StepSimulation()
     {
         sim.Timestep(1 / 60f);
     }
 
-    [UnmanagedCallersOnly(EntryPoint = "GetBodyPos")]
+    [UnmanagedCallersOnly(EntryPoint = nameof(GetBodyPos))]
     public static Vector3 GetBodyPos()
     {
         var pos = sim.Bodies[bodyHandle].Pose.Position;
