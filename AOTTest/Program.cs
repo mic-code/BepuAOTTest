@@ -20,6 +20,10 @@ namespace AOTTest
 
         static void Main(string[] args)
         {
+            NativeWrap.LoadAll();
+            return;
+
+
             var handle = NativeLibrary.Load("Wrapper.dll");
             var CreateSimulationInstancePtr = NativeLibrary.GetExport(handle, "CreateSimulationInstance");
             var StepSimulationPtr = NativeLibrary.GetExport(handle, "StepSimulation");
