@@ -15,6 +15,7 @@ public class BepuWrapper
     static BufferPool bufferPool;
     static Simulation sim;
     static BodyHandle bodyHandle;
+    static Delegate callback;
 
     [UnmanagedCallersOnly(EntryPoint = nameof(CreateSimulationInstance))]
     public static void CreateSimulationInstance()
@@ -36,6 +37,7 @@ public class BepuWrapper
     public static void StepSimulation()
     {
         sim.Timestep(1 / 60f);
+        callback.DynamicInvoke();
     }
 
     [UnmanagedCallersOnly(EntryPoint = nameof(GetBodyPos))]
@@ -44,6 +46,15 @@ public class BepuWrapper
         var pos = sim.Bodies[bodyHandle].Pose.Position;
         Console.WriteLine(pos);
         return pos;
+    }
+
+    delegate void CallbackDelegate();
+
+    [UnmanagedCallersOnly(EntryPoint = nameof(SetCallback))]
+    public static void SetCallback(IntPtr callback)
+    {
+        BepuWrapper.callback = Marshal.GetDelegateForFunctionPointer<CallbackDelegate>(callback);
+        Console.WriteLine("callback set");
     }
 
     public struct PoseIntegratorCallbacks : IPoseIntegratorCallbacks
