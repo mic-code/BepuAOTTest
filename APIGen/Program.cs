@@ -9,15 +9,8 @@ namespace APIGen
     {
         static void Main(string[] args)
         {
-            var template = Template.Parse(@"
-using System.Numerics;
-
-unsafe public class BepuNative
-{
-    static nint handle => NativeLibrary.Load(""Wrapper.dll"");
-    {{content}}
-}");
-
+            var templateString = File.ReadAllText("../../../template.txt");
+            var template = Template.Parse(templateString);
             var fieldTemplate = Template.Parse(@"public static delegate* unmanaged<{{types}}> {{name}} = (delegate* unmanaged<{{types}}>)NativeLibrary.GetExport(handle, nameof({{name}}));");
             var content = new StringBuilder();
             var methods = typeof(BepuWrapper).GetMethods();
@@ -32,7 +25,8 @@ unsafe public class BepuNative
                 }
 
             var output = template.Render(new { content });
-
+            var outputPath = $"../../../../AOTTest/BepuNative.cs";
+            File.WriteAllText(outputPath, output);
             Console.WriteLine(output);
         }
     }

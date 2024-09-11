@@ -1,0 +1,8 @@
+using System.Numerics;
+using System.Runtime.InteropServices;
+
+unsafe public class BepuNative
+{
+    static nint handle => NativeLibrary.Load("Wrapper.dll");
+    {{content}}
+}
