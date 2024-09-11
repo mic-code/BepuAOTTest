@@ -57,6 +57,12 @@ public class BepuWrapper
         Console.WriteLine("callback set");
     }
 
+    [UnmanagedCallersOnly(EntryPoint = nameof(MethodWithParameters))]
+    public static void MethodWithParameters(int integer,float floating,bool boolean)
+    {
+
+    }
+
     public struct PoseIntegratorCallbacks : IPoseIntegratorCallbacks
     {
         public void Initialize(Simulation simulation) { }
