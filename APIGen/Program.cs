@@ -38,7 +38,6 @@ namespace APIGen
 
         static string GetShortType(Type type)
         {
-            Console.WriteLine(type.Name);
             switch (type.Name)
             {
                 case nameof(Byte):
