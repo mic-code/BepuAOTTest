@@ -14,7 +14,7 @@ unsafe public class BepuNative
 
     public static void Init()
     {
-        var library = LoadLibrary("C:\\Users\\MICology-VP01\\Documents\\repository\\SaturationDefence\\Assets\\Overimagined\\BepuTest\\Plugins\\Wrapper.dll");
+        var library = LoadLibrary(Directory.GetCurrentDirectory() + "\\ExtraLibrary\\Wrapper.dll");
         
         {{init}}
     }

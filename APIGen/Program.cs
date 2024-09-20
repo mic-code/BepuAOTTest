@@ -1,4 +1,5 @@
 ﻿using Scriban;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using Wrapper;
@@ -12,8 +13,10 @@ internal class Program
         var outputPath = $"../../../../AOTTest/BepuNative.cs";
         var output = GetProcAddressFunctionPointer();
         File.WriteAllText(outputPath, output);
-        Console.WriteLine(output);
+        //Console.WriteLine(output);
         Console.WriteLine("Output to " + Path.GetFullPath(outputPath));
+
+        Directory.GetCurrentDirectory();
     }
 
     static string GetProcAddressFunctionPointer()
@@ -28,14 +31,7 @@ internal class Program
         foreach (var method in methods)
             if (Attribute.IsDefined(method, typeof(UnmanagedCallersOnlyAttribute)))
             {
-                var types = new StringBuilder();
-                foreach (var param in method.GetParameters())
-                {
-                    types.Append(GetShortType(param.ParameterType));
-                    types.Append(",");
-                }
-
-                types.Append(GetShortType(method.ReturnType));
+                var types = GetTypes(method);
                 declaration.AppendLine(declarationTemplate.Render(new { name = method.Name, types = types }));
                 init.AppendLine(initTemplate.Render(new { name = method.Name, types = types }));
             }
@@ -52,19 +48,22 @@ internal class Program
         var methods = typeof(BepuWrapper).GetMethods();
         foreach (var method in methods)
             if (Attribute.IsDefined(method, typeof(UnmanagedCallersOnlyAttribute)))
-            {
-                var types = new StringBuilder();
-                foreach (var param in method.GetParameters())
-                {
-                    types.Append(GetShortType(param.ParameterType));
-                    types.Append(",");
-                }
-
-                types.Append(GetShortType(method.ReturnType));
-                content.AppendLine(fieldTemplate.Render(new { name = method.Name, types = types }));
-            }
+                content.AppendLine(fieldTemplate.Render(new { name = method.Name, types = GetTypes(method) }));
 
         return template.Render(new { content });
+    }
+
+    static StringBuilder GetTypes(MethodInfo method)
+    {
+        var types = new StringBuilder();
+        foreach (var param in method.GetParameters())
+        {
+            types.Append(GetShortType(param.ParameterType));
+            types.Append(",");
+        }
+
+        types.Append(GetShortType(method.ReturnType));
+        return types;
     }
 
 
@@ -105,6 +104,16 @@ internal class Program
             case "Void":
                 return "void";
             default:
+                if (type.IsGenericType)
+                {
+                    var result = new StringBuilder();
+                    result.Append(type.Name.TrimEnd('`', '1'));
+                    result.Append("<");
+                    foreach (var arg in type.GetGenericArguments())
+                        result.Append(GetShortType(arg));
+                    result.Append(">");
+                    return result.ToString();
+                }
                 return type.Name;
         }
     }
