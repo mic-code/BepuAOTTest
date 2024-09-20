@@ -9,6 +9,42 @@ internal class Program
 {
     static void Main(string[] args)
     {
+        var outputPath = $"../../../../AOTTest/BepuNative.cs";
+        var output = GetProcAddressFunctionPointer();
+        File.WriteAllText(outputPath, output);
+        Console.WriteLine(output);
+        Console.WriteLine("Output to " + Path.GetFullPath(outputPath));
+    }
+
+    static string GetProcAddressFunctionPointer()
+    {
+        var templateString = File.ReadAllText("../../../GetProcAddressTemplate.txt");
+        var template = Template.Parse(templateString);
+        var declarationTemplate = Template.Parse(@"public static delegate* unmanaged[Stdcall]<{{types}}> {{name}};");
+        var initTemplate = Template.Parse(@"{{name}} = (delegate* unmanaged[Stdcall]<{{types}}>)GetProcAddress(library, nameof({{name}}));");
+        var declaration = new StringBuilder();
+        var init = new StringBuilder();
+        var methods = typeof(BepuWrapper).GetMethods();
+        foreach (var method in methods)
+            if (Attribute.IsDefined(method, typeof(UnmanagedCallersOnlyAttribute)))
+            {
+                var types = new StringBuilder();
+                foreach (var param in method.GetParameters())
+                {
+                    types.Append(GetShortType(param.ParameterType));
+                    types.Append(",");
+                }
+
+                types.Append(GetShortType(method.ReturnType));
+                declaration.AppendLine(declarationTemplate.Render(new { name = method.Name, types = types }));
+                init.AppendLine(initTemplate.Render(new { name = method.Name, types = types }));
+            }
+
+        return template.Render(new { declaration, init });
+    }
+
+    static string CompactFunctionPointer()
+    {
         var templateString = File.ReadAllText("../../../template.txt");
         var template = Template.Parse(templateString);
         var fieldTemplate = Template.Parse(@"public static delegate* unmanaged<{{types}}> {{name}} = (delegate* unmanaged<{{types}}>)NativeLibrary.GetExport(handle, nameof({{name}}));");
@@ -28,11 +64,7 @@ internal class Program
                 content.AppendLine(fieldTemplate.Render(new { name = method.Name, types = types }));
             }
 
-        var output = template.Render(new { content });
-        var outputPath = $"../../../../AOTTest/BepuNative.cs";
-        File.WriteAllText(outputPath, output);
-        Console.WriteLine(output);
-        Console.WriteLine("Output to " + Path.GetFullPath(outputPath));
+        return template.Render(new { content });
     }
 
 

@@ -8,15 +8,20 @@ unsafe public partial class Program
 
     static void Main(string[] args)
     {
-       BepuNative.CreateSimulationInstance();
+        BepuNative.CreateSimulationInstance();
         var ptr = Marshal.GetFunctionPointerForDelegate(Callback);
-        BepuNative.SetCallback(ptr);
+        //BepuNative.SetCallback(ptr);
         while (true)
         {
             BepuNative.StepSimulation();
-            BepuNative.GetBodyPos();
+            var states = BepuNative.GetActiveStates();
+            //BepuNative.GetBodyPos();
+
+            //Console.WriteLine("=>" + states[0].Motion.Pose.Position);
+
             Thread.Sleep(10);
         }
+
     }
 
     public static void Callback()

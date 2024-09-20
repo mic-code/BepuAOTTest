@@ -13,4 +13,8 @@
     <Exec Command="xcopy /y /d  &quot;$(SolutionDir)Wrapper\publish\Release\net8.0\*.dll&quot; &quot;$(OutDir)&quot;" />
   </Target>
 
+  <ItemGroup>
+    <PackageReference Include="BepuPhysics" Version="2.5.0-beta.23" />
+  </ItemGroup>
+
 </Project>

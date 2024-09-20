@@ -1,0 +1,2 @@
+Copy-Item -Path "publish\Debug\net8.0\*" -Destination "..\AOTTest\bin\Debug\net8.0" -Recurse -force
+Copy-Item -Path "publish\Release\net8.0\*" -Destination "..\AOTTest\bin\Release\net8.0" -Recurse -force

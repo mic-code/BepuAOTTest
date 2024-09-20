@@ -30,14 +30,22 @@ public class BepuWrapper
         var sphereShape = new Sphere(1);
         var bodyDesc = BodyDescription.CreateDynamic(new Vector3(), sphereShape.ComputeInertia(1), sim.Shapes.Add(sphereShape), 0.01f);
         bodyDesc.Pose = (new Vector3(0, 10, 0), QuaternionEx.CreateFromAxisAngle(Vector3.UnitY, 0));
-        sim.Bodies.Add(bodyDesc);
+        bodyHandle = sim.Bodies.Add(bodyDesc);
+        var bh2 = sim.Bodies.Add(bodyDesc);
+        var bh3 = sim.Bodies.Add(bodyDesc);
+        var bh4 = sim.Bodies.Add(bodyDesc);
+
+        Console.WriteLine(bodyHandle);
+        Console.WriteLine(bh2);
+        Console.WriteLine(bh3);
+        Console.WriteLine(bh4);
     }
 
     [UnmanagedCallersOnly(EntryPoint = nameof(StepSimulation))]
     public static void StepSimulation()
     {
         sim.Timestep(1 / 60f);
-        callback.DynamicInvoke();
+        callback?.DynamicInvoke();
     }
 
     [UnmanagedCallersOnly(EntryPoint = nameof(GetBodyPos))]
@@ -46,6 +54,12 @@ public class BepuWrapper
         var pos = sim.Bodies[bodyHandle].Pose.Position;
         Console.WriteLine(pos);
         return pos;
+    }
+
+    [UnmanagedCallersOnly(EntryPoint = nameof(GetActiveStates))]
+    public static Buffer<BodyDynamics> GetActiveStates()
+    {
+        return sim.Bodies.ActiveSet.DynamicsState;
     }
 
     delegate void CallbackDelegate();
@@ -58,7 +72,7 @@ public class BepuWrapper
     }
 
     [UnmanagedCallersOnly(EntryPoint = nameof(MethodWithParameters))]
-    public static void MethodWithParameters(int integer,float floating,bool boolean)
+    public static void MethodWithParameters(int integer, float floating, bool boolean)
     {
 
     }

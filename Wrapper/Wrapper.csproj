@@ -9,8 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BepuPhysics" Version="2.4.0" />
+    <PackageReference Include="BepuPhysics" Version="2.5.0-beta.23" />
 	<RdXmlFile Include="rd.xml" />
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="Publish">
+    <Exec Command="PowerShell ../../PostBuild.ps1" />
+  </Target>
 
 </Project>
