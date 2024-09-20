@@ -12,9 +12,9 @@ unsafe public class BepuNative
 
     {{declaration}}
 
-    public static void Init()
+    public static void Init(string dllPath)
     {
-        var library = LoadLibrary(Directory.GetCurrentDirectory() + "\\ExtraLibrary\\Wrapper.dll");
+        var library = LoadLibrary(dllPath);
         
         {{init}}
     }

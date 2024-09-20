@@ -8,6 +8,7 @@ unsafe public partial class Program
 
     static void Main(string[] args)
     {
+        BepuNative.Init("Wrapper.dll");
         BepuNative.CreateSimulationInstance();
         var ptr = Marshal.GetFunctionPointerForDelegate(Callback);
         //BepuNative.SetCallback(ptr);
